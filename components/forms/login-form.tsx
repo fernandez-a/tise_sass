@@ -64,14 +64,15 @@ export default function LoginForm() {
         return;
       }
 
-      const { name, surname } = user.user_metadata || {};
-
+      const { name, surname,username } = user.user_metadata || {};
+      console.log(user.user_metadata)
       const { error: insertError } = await supabase
         .from("user_profile")
         .insert({
           user_id: user.id,
           name,
           surname,
+          username
         });
 
       if (insertError) {

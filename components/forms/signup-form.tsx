@@ -27,6 +27,7 @@ const formSchema = z.object({
   password: z
     .string()
     .min(6, { message: "Password must be at least 6 characters" }),
+  username: z.string(),
 });
 
 type SignupFormValues = z.infer<typeof formSchema>;
@@ -42,6 +43,7 @@ export default function SignupForm() {
       surname: "",
       email: "",
       password: "",
+      username: "",
     },
   });
 
@@ -58,6 +60,7 @@ export default function SignupForm() {
             data: {
               name: data.name,
               surname: data.surname,
+              username: data.username,
             },
           },
         });
@@ -116,7 +119,23 @@ export default function SignupForm() {
               </FormItem>
             )}
           />
-
+          <FormField
+            control={form.control}
+            name="username"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Username</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="username"
+                    disabled={loading}
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <FormField
             control={form.control}
             name="email"

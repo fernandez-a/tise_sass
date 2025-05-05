@@ -1,17 +1,19 @@
-"use client"; // Add this at the top
+"use client";
 
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
+
 import {
+  Home,
+  Inbox,
   Calendar,
-  BarChartIcon,
-  Funnel,
-  LayoutDashboardIcon,
+  Search,
   Settings,
   User2,
   ChevronUp,
-  Tags
 } from "lucide-react";
+
 import {
   Sidebar,
   SidebarContent,
@@ -21,73 +23,90 @@ import {
   SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
+  SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuItem,
-  DropdownMenuContent,
-} from "@/components/ui/dropdown-menu";
+  SidebarSeparator,
+} from "./ui/sidebar";
 import Link from "next/link";
 import Image from "next/image";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
 
-// Menu items.
 const items = [
-  {
-    title: "Dashboard",
-    url: "/dashboard",
-    icon: LayoutDashboardIcon,
-  },
-  {
-    title: "Listings",
-    url: "/listings",
-    icon: Tags,
-  },
-  {
-    title: "Filters",
-    url: "#",
-    icon: Funnel,
-  },
-  {
-    title: "Calendar",
-    url: "#",
-    icon: Calendar,
-  },
-  {
-    title: "Settings",
-    url: "#",
-    icon: Settings,
-  },
+  { title: "Home", url: "/", icon: Home },
+  { title: "Inbox", url: "#", icon: Inbox },
+  { title: "Calendar", url: "#", icon: Calendar },
+  { title: "Search", url: "#", icon: Search },
+  { title: "Settings", url: "#", icon: Settings },
 ];
 
 export function AppSidebar() {
-  const router = useRouter(); // This now works since the component is client-side
+  const router = useRouter();
   const supabase = createClient();
 
-  // Handle sign out
+  const [userProfile, setUserProfile] = useState<{
+    username: string;
+    name: string;
+    surname: string;
+  } | null>(null);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
+
+      if (userError || !user) {
+        console.error("Failed to get user", userError);
+        return;
+      }
+
+      const { data: profile, error: profileError } = await supabase
+        .from("user_profile")
+        .select("username, name, surname")
+        .eq("user_id", user.id)
+        .single();
+
+      if (profileError) {
+        console.error("Failed to fetch profile", profileError);
+      } else {
+        setUserProfile(profile);
+      }
+    };
+
+    fetchUserData();
+  }, [supabase]);
+
   async function handleSignOut() {
     const { error } = await supabase.auth.signOut();
     if (error) {
       console.error("Sign out error:", error.message);
     } else {
-      router.push("/login"); // Redirect to login or home after signing out
+      router.push("/login");
     }
   }
 
   return (
-    <Sidebar>
-      <SidebarHeader>
+    <Sidebar collapsible="icon">
+      <SidebarHeader className="py-4">
         <SidebarMenu>
-          <SidebarMenuButton asChild>
-            <Link href="/">
-              <Image src="/next.svg" alt="logo" width={20} height={20} />
-              <span>Dev</span>
-            </Link>
-          </SidebarMenuButton>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild>
+              <Link href="/">
+                <Image src="/next.svg" alt="logo" width={20} height={20} />
+                <span>{userProfile ? `${userProfile.username}` : "Loading..."}</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
+      <SidebarSeparator />
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Application</SidebarGroupLabel>
@@ -96,11 +115,14 @@ export function AppSidebar() {
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <Link href={item.url} className="flex items-center gap-2">
+                    <Link href={item.url}>
                       <item.icon />
                       <span>{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
+                  {item.title === "Inbox" && (
+                    <SidebarMenuBadge>24</SidebarMenuBadge>
+                  )}
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
@@ -113,13 +135,17 @@ export function AppSidebar() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton>
-                  <User2 /> John Doe <ChevronUp className="ml-auto" />
+                  <User2 />
+                  {userProfile ? `${userProfile.name} ${userProfile.surname}` : "Loading..."}
+                  <ChevronUp className="ml-auto" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="center">
+              <DropdownMenuContent align="end">
                 <DropdownMenuItem>Account</DropdownMenuItem>
                 <DropdownMenuItem>Settings</DropdownMenuItem>
-                <DropdownMenuItem onClick={handleSignOut}>Sign out</DropdownMenuItem>
+                <DropdownMenuItem onClick={handleSignOut}>
+                  Sign out
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </SidebarMenuItem>
