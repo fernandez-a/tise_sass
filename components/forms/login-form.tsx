@@ -40,66 +40,43 @@ export default function LoginForm() {
     },
   });
 
-  // Function to handle form submission
   const onSubmit = async (data: UserFormValue) => {
     setLoading(true);
     const supabase = createClient();
-  
+
     try {
-      const { data: signInData, error } = await supabase.auth.signInWithPassword({
-        email: data.email,
-        password: data.password,
-      });
-  
+      const { data: signInData, error } =
+        await supabase.auth.signInWithPassword({
+          email: data.email,
+          password: data.password,
+        });
+
       if (error) {
         console.error("Login failed:", error.message);
         return;
       }
-  
-      // Get user ID from current session
+
       const {
         data: { user },
       } = await supabase.auth.getUser();
-  
       if (!user) {
         console.error("User not found after login.");
         return;
       }
-  
-      // Attempt to load profile from localStorage
-      const pendingProfile = localStorage.getItem("pending_profile");
-  
-      if (pendingProfile) {
-        const { name, surname } = JSON.parse(pendingProfile);
-  
-        // Check if profile already exists
-        const { data: existing, error: fetchError } = await supabase
-          .from("user_profile")
-          .select("id")
-          .eq("user_id", user.id)
-          .single();
-  
-        if (fetchError && fetchError.code !== "PGRST116") {
-          // Only continue if the error is "No rows found"
-          console.error("Error checking existing profile:", fetchError.message);
-        }
-  
-        if (!existing) {
-          // Insert profile
-          const { error: insertError } = await supabase.from("user_profile").insert({
-            user_id: user.id,
-            name,
-            surname,
-          });
-  
-          if (insertError) {
-            console.error("Profile insert failed:", insertError.message);
-          } else {
-            localStorage.removeItem("pending_profile"); // Clean up
-          }
-        }
+
+      const { name, surname } = user.user_metadata || {};
+
+      const { error: insertError } = await supabase
+        .from("user_profile")
+        .insert({
+          user_id: user.id,
+          name,
+          surname,
+        });
+
+      if (insertError) {
+        console.error("Profile insert failed:", insertError.message);
       }
-  
       router.push(callbackUrl ?? "/dashboard");
     } catch (error) {
       console.error("Unexpected login error:", error);
@@ -107,7 +84,6 @@ export default function LoginForm() {
       setLoading(false);
     }
   };
-  
 
   return (
     <>

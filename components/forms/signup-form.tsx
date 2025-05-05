@@ -54,16 +54,18 @@ export default function SignupForm() {
         await supabase.auth.signUp({
           email: data.email,
           password: data.password,
+          options: {
+            data: {
+              name: data.name,
+              surname: data.surname,
+            },
+          },
         });
 
       if (signUpError) throw signUpError;
 
       const user = signUpData.user;
       if (!user) throw new Error("User signup failed");
-      localStorage.setItem("pending_profile", JSON.stringify({
-        name: data.name,
-        surname: data.surname,
-      }));
       router.push("/login");
     } catch (err) {
       console.error("Signup error:", err);
