@@ -15,11 +15,11 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { createClient } from "@/utils/supabase/client"; // Import Supabase client
+import { createClient } from "@/utils/supabase/client";
 import Link from "next/link";
 import DiscordSignInButton from "../discord-auth-button";
 
-// Define the form schema using Zod
+// Schema
 const formSchema = z.object({
   email: z.string().email({ message: "Enter a valid email address" }),
   password: z.string().min(6, { message: "Password is required" }),
@@ -45,42 +45,57 @@ export default function LoginForm() {
     const supabase = createClient();
 
     try {
-      const { data: signInData, error } =
+      const { data: signInData, error: signInError } =
         await supabase.auth.signInWithPassword({
           email: data.email,
           password: data.password,
         });
 
-      if (error) {
-        console.error("Login failed:", error.message);
+      if (signInError) {
+        console.error("Login failed:", signInError.message);
         return;
       }
 
       const {
         data: { user },
       } = await supabase.auth.getUser();
+
       if (!user) {
         console.error("User not found after login.");
         return;
       }
 
-      const { name, surname,username } = user.user_metadata || {};
-      console.log(user.user_metadata)
-      const { error: insertError } = await supabase
+      const { name, surname, username } = user.user_metadata || {};
+
+      // Check if profile already exists
+      const { data: existingProfile, error: checkError } = await supabase
         .from("user_profile")
-        .insert({
+        .select("id")
+        .eq("user_id", user.id)
+        .single();
+
+      if (checkError) {
+        console.error("Failed to check user profile:", checkError.message);
+        return;
+      }
+
+      // Insert only if not exists
+      if (!existingProfile) {
+        const { error: insertError } = await supabase.from("user_profile").insert({
           user_id: user.id,
           name,
           surname,
-          username
+          username,
         });
 
-      if (insertError) {
-        console.error("Profile insert failed:", insertError.message);
+        if (insertError) {
+          console.error("Profile insert failed:", insertError.message);
+        }
       }
+
       router.push(callbackUrl ?? "/dashboard");
-    } catch (error) {
-      console.error("Unexpected login error:", error);
+    } catch (err) {
+      console.error("Unexpected login error:", err);
     } finally {
       setLoading(false);
     }
