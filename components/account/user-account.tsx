@@ -1,6 +1,3 @@
-"use client";
-
-import { Badge } from "@/components/ui/badge";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -9,9 +6,8 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { Progress } from "@/components/ui/progress";
-import { Sheet, SheetTrigger } from "@/components/ui/sheet";
-import { Button } from "@/components/ui/button";
+import TiseAccountCard from "./tise-account-card";
+import UserInformationCard from "./user-information-account";
 
 interface UserAccountProps {
   profile: {
@@ -28,7 +24,8 @@ interface UserAccountProps {
 
 export default function UserAccount({ profile, user }: UserAccountProps) {
   return (
-    <div className="">
+    <div>
+      {/* ...breadcrumb stays same */}
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -47,44 +44,22 @@ export default function UserAccount({ profile, user }: UserAccountProps) {
 
       <div className="mt-4 flex flex-col xl:flex-row gap-8">
         <div className="w-full xl:w-1/3 space-y-6">
+          <UserInformationCard
+            name={profile.name}
+            surname={profile.surname}
+            email={user.email}
+            phone={user.phone}
+            createdAt={user.created_at}
+          />
+        </div>
+
+        <div className="w-full xl:w-1/3 space-y-6">
+          <TiseAccountCard name={profile.name} username={profile.username} />
+        </div>
+
+        <div className="w-full xl:w-1/3 space-y-6">
           <div className="bg-primary-foreground p-4 rounded-lg">
-            <div className="flex items-center justify-between">
-              <h1 className="text-xl font-semibold">User Information</h1>
-              <Sheet>
-                <SheetTrigger asChild>
-                  <Button>Edit User</Button>
-                </SheetTrigger>
-              </Sheet>
-            </div>
-
-            <div className="space-y-4 mt-4">
-              <div className="flex flex-col gap-2 mb-8">
-                <p className="text-sm text-muted-foreground">
-                  Profile completion
-                </p>
-                <Progress value={66} />
-              </div>
-
-              <div className="flex items-center gap-2">
-                <span className="font-bold">Name:</span>
-                <span>{profile.name} {profile.surname}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="font-bold">Email:</span>
-                <span>{user.email}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="font-bold">Phone:</span>
-                <span>{user.phone ?? "Not set"}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="font-bold">Role:</span>
-                <Badge>User</Badge>
-              </div>
-            </div>
-            <p className="text-sm text-muted-foreground mt-4">
-              Joined on {new Date(user.created_at).toLocaleDateString()}
-            </p>
+            <h2 className="text-xl font-semibold mb-4">Cookie generator</h2>
           </div>
         </div>
       </div>

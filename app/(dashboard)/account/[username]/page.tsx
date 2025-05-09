@@ -12,7 +12,6 @@ export default async function AccountPage({
   const {
     data: { user },
   } = await supabase.auth.getUser();
-
   if (!user) return notFound();
   const { data: profile } = await supabase
     .from("user_profile")
@@ -26,6 +25,21 @@ export default async function AccountPage({
   if (!profile || profile.user_id !== user.id) {
     return <div>Not authorized or user not found.</div>;
   }
-
-  return <UserAccount profile={profile} user={profile} />;
+  if (profile && user && user.email) {
+    const safe_profile = {
+      username: profile.username,
+      name: profile.name,
+      surname: profile.surname,
+    };
+  
+    const safe_user = {
+      email: user.email,
+      phone: user.phone ?? null,
+      created_at: user.created_at,
+    };
+  
+    return <UserAccount profile={safe_profile} user={safe_user} />;
+  }
+  
+ 
 }
