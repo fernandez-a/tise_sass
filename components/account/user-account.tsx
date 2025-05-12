@@ -21,11 +21,17 @@ interface UserAccountProps {
     created_at: string;
   };
 }
+import { ReCaptchaProvider } from "next-recaptcha-v3";
+import CaptchaHarvesterCard from "../captcha-card";
 
 export default function UserAccount({ profile, user }: UserAccountProps) {
+  const handleCaptchaChange = (value: string | null) => {
+    console.log("Captcha value:", value);
+    // Optionally send to your backend for verification
+  };
   return (
     <div>
-      {/* ...breadcrumb stays same */}
+      {/*Breadcrumb */}
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -58,9 +64,7 @@ export default function UserAccount({ profile, user }: UserAccountProps) {
         </div>
 
         <div className="w-full xl:w-1/3 space-y-6">
-          <div className="bg-primary-foreground p-4 rounded-lg">
-            <h2 className="text-xl font-semibold mb-4">Cookie generator</h2>
-          </div>
+          <CaptchaHarvesterCard />
         </div>
       </div>
     </div>
