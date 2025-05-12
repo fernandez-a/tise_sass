@@ -7,7 +7,7 @@ import { createClient } from "@/utils/supabase/client";
 import {
   Home,
   Funnel,
-  Calendar,
+  Tags,
   Search,
   Settings,
   User2,
@@ -38,9 +38,9 @@ import {
 } from "./ui/dropdown-menu";
 
 const items = [
-  { title: "Home", url: "/", icon: Home },
-  { title: "Monitor", url: "#", icon: Funnel },
-  { title: "Calendar", url: "#", icon: Calendar },
+  { title: "Home", url: "/dashboard", icon: Home },
+  { title: "Monitor", url: "/monitor", icon: Funnel },
+  { title: "Listings", url: "/listings", icon: Tags },
   { title: "Search", url: "#", icon: Search },
   { title: "Settings", url: "#", icon: Settings },
 ];

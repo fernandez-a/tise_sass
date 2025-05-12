@@ -65,7 +65,7 @@ export default function ProductList() {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto space-y-4 px-2">
+    <div className="w-full max-w-md mx-auto space-y-4 px-2 pb-4">
       {loading ? (
         <Card className="w-full shadow-xl rounded-2xl p-4 bg-white">
           <CardContent>Loading products...</CardContent>
