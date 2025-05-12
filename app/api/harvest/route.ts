@@ -40,10 +40,10 @@ export async function GET() {
 
     // // Enter credentials
     // await page.waitForSelector('input[name="emailOrPhone"]');
-    // await page.type('input[name="emailOrPhone"]', "+34646164957");
+    // await page.type('input[name="emailOrPhone"]', "phone");
 
     // await page.waitForSelector('input[name="password"]');
-    // await page.type('input[name="password"]', "granca2014.");
+    // await page.type('input[name="password"]', "password");
 
     // // Click submit
     // const submitButton = await page.waitForSelector(
