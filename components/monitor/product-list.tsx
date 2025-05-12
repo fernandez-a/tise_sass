@@ -31,6 +31,8 @@ export default function ProductList() {
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
         const data = await res.json();
         if (data.success && Array.isArray(data.results)) {
+          // Log the number of products received from the API
+          console.log("Number of products received:", data.results.length);
           setProducts(data.results as Product[]);
         } else {
           setError("Invalid data format");
@@ -63,8 +65,12 @@ export default function ProductList() {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto max-h-[600px] space-y-4 px-2">
-      {products && products.length > 0 ? (
+    <div className="w-full max-w-md mx-auto space-y-4 px-2">
+      {loading ? (
+        <Card className="w-full shadow-xl rounded-2xl p-4 bg-white">
+          <CardContent>Loading products...</CardContent>
+        </Card>
+      ) : products && products.length > 0 ? (
         products.map((product) => {
           return (
             <Card key={product.id} className="rounded-xl shadow-md p-4 bg-white">
@@ -92,7 +98,6 @@ export default function ProductList() {
                   </div>
                 </div>
 
-
                 {/* Details below */}
                 <div className="mt-4 text-left">
                   <p className="text-gray-500 text-sm">{product.brand}</p>
@@ -110,13 +115,11 @@ export default function ProductList() {
                 </div>
               </CardContent>
             </Card>
-          )
+          );
         })
       ) : (
         <p className="text-center text-gray-500">No products available.</p>
       )}
-
     </div>
-  )
-
-};
+  );
+}
