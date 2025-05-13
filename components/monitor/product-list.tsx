@@ -6,6 +6,7 @@ import { Button } from "../ui/button";
 import useSocket from "@/hooks/useSocket";
 import { mapProduct } from "@/utils/productMapping"; // Import the mapping function
 import { Product } from "@/types/product"; // Import the Product type
+import { toast } from "sonner";
 
 export default function ProductList() {
   const [products, setProducts] = useState<Product[] | null>(null);
@@ -82,7 +83,9 @@ export default function ProductList() {
     };
 
     socket.on('new_product', (data) => {
-      console.log(data)
+      toast("New Product", {
+        description: `${data.title} product was just added.`
+      });
       handleNewProduct(data)
     });
 
@@ -127,6 +130,9 @@ export default function ProductList() {
                 </p>
                 <p className="text-xs text-gray-500 capitalize">
                   {product.condition.replace("_", " ")}
+                </p>
+                <p className="text-xs text-gray-500 capitalize">
+                  {product.updated_at}
                 </p>
                 <div className="mt-3 flex space-x-2">
                   <Button variant="outline">Like</Button>

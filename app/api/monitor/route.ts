@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const response = await fetch("http://127.0.0.1:5000/api/get_items");
+    const response = await fetch("http://127.0.0.1:5000/api/initial_products");
 
     if (!response.ok) {
       console.error(`Failed to fetch data from Flask app: ${response.status}`);
