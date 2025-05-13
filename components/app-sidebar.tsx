@@ -8,7 +8,6 @@ import {
   Home,
   Funnel,
   Tags,
-  Search,
   Settings,
   User2,
   ChevronUp,
@@ -41,7 +40,6 @@ const items = [
   { title: "Home", url: "/dashboard", icon: Home },
   { title: "Monitor", url: "/monitor", icon: Funnel },
   { title: "Listings", url: "/listings", icon: Tags },
-  { title: "Search", url: "#", icon: Search },
   { title: "Settings", url: "#", icon: Settings },
 ];
 
