@@ -5,6 +5,7 @@ export interface Photo {
   type: string;
 }
 
+
 export interface Product {
   id: string;
   title: string;
