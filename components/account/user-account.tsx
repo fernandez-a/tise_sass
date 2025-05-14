@@ -21,14 +21,10 @@ interface UserAccountProps {
     created_at: string;
   };
 }
-import { ReCaptchaProvider } from "next-recaptcha-v3";
 import CaptchaHarvesterCard from "../captcha-card";
 
 export default function UserAccount({ profile, user }: UserAccountProps) {
-  const handleCaptchaChange = (value: string | null) => {
-    console.log("Captcha value:", value);
-    // Optionally send to your backend for verification
-  };
+  
   return (
     <div>
       {/*Breadcrumb */}

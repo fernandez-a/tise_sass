@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
+import { usePathname } from "next/navigation";
 
 import {
   Home,
@@ -11,18 +12,20 @@ import {
   Settings,
   User2,
   ChevronUp,
+  ChevronDown,
 } from "lucide-react";
+
+import {
+  Collapsible,
+  CollapsibleContent,
+} from "./ui/collapsible";
 
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarSeparator,
@@ -35,6 +38,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
+import { CollapsibleTrigger } from "@radix-ui/react-collapsible";
 
 const items = [
   { title: "Home", url: "/dashboard", icon: Home },
@@ -46,6 +50,7 @@ const items = [
 export function AppSidebar() {
   const router = useRouter();
   const supabase = createClient();
+  const pathname = usePathname();
 
   const [userProfile, setUserProfile] = useState<{
     username: string;
@@ -106,26 +111,54 @@ export function AppSidebar() {
       </SidebarHeader>
       <SidebarSeparator />
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Application</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <Link href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                  {item.title === "Inbox" && (
-                    <SidebarMenuBadge>24</SidebarMenuBadge>
-                  )}
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        <SidebarMenu>
+          {items.map((item) => {
+            const isMonitor = item.title === "Monitor";
+
+            if (isMonitor && pathname.startsWith('/monitor')) {
+              return (
+                <Collapsible key={item.title}>
+                  <SidebarMenuItem>
+                    <CollapsibleTrigger asChild>
+                      <SidebarMenuButton>
+                        <item.icon />
+                        <span>{item.title}</span>
+                      </SidebarMenuButton>
+                    </CollapsibleTrigger>
+                  </SidebarMenuItem>
+
+                  <CollapsibleContent className="pl-10">
+                    <ul className="flex flex-col gap-2 text-sm text-muted-foreground">
+                      <li>
+                        <Link
+                          href="/monitor/filters"
+                          className="flex items-center gap-1 hover:text-foreground transition"
+                        >
+                          Add a filter
+                        </Link>
+                      </li>
+                    </ul>
+                  </CollapsibleContent>
+                </Collapsible>
+              );
+            }
+
+            // default item rendering
+            return (
+              <SidebarMenuItem key={item.title}>
+                <SidebarMenuButton asChild>
+                  <Link href={item.url}>
+                    <item.icon />
+                    <span>{item.title}</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            );
+          })}
+
+        </SidebarMenu>
+
+
       </SidebarContent>
       <SidebarFooter>
         <SidebarMenu>
@@ -140,8 +173,8 @@ export function AppSidebar() {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem><Link href={"/account"}>
-                Account 
-                    </Link></DropdownMenuItem>
+                  Account
+                </Link></DropdownMenuItem>
                 <DropdownMenuItem>Settings</DropdownMenuItem>
                 <DropdownMenuItem onClick={handleSignOut}>
                   Sign out

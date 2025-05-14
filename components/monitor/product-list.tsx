@@ -38,34 +38,7 @@ export default function ProductList() {
 
     fetchInitialProducts();
   }, []);
-
-  // useEffect(() => {
-  //   if (!socket) return;
-
-  //   const handleNewProduct = (rawNewProduct: any) => {
-  //     // console.log("WebSocket event 'new_product' received!");
-  //     console.log(rawNewProduct)
-  //     // console.log(rawNewProduct) // Comment this out for now
-  //     // const newProduct = mapProduct(rawNewProduct);
-  //     // setProducts((prevProducts) => {
-  //     //   if (prevProducts) {
-  //     //     return [newProduct, ...prevProducts];
-  //     //   } else {
-  //     //     return [newProduct];
-  //     //   }
-  //     // });
-  //     // console.log('New product received via WebSocket:', newProduct);
-  //   };
-
-  //   socket.on('new_product',(data) => {
-  //     handleNewProduct(data)  
-  //   });
-
-  //   return () => {
-  //     socket.off('new_product', handleNewProduct);
-  //   };
-  // }, [socket, setProducts]);
-
+  
   useEffect(() => {
     if (!socket) return;
 
