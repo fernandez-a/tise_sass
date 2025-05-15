@@ -14,5 +14,6 @@ export interface Product {
   currency: string;
   updated_at:string;
   price_numeric: number;
+  country_id: string,
   photos: Photo[];
 }

@@ -7,10 +7,13 @@ import useSocket from "@/hooks/useSocket";
 import { mapProduct } from "@/utils/productMapping"; // Import the mapping function
 import { Product } from "@/types/product"; // Import the Product type
 import { toast } from "sonner";
+import { useUser } from "@/context/UserContext";
 
 export default function ProductList() {
   const [products, setProducts] = useState<Product[] | null>(null);
   const [loading, setLoading] = useState(false);
+  const user = useUser(); // User data from context
+  
   const [error, setError] = useState<string | null>(null);
   const socket = useSocket("http://localhost:5000");
 
@@ -38,7 +41,7 @@ export default function ProductList() {
 
     fetchInitialProducts();
   }, []);
-  
+
   useEffect(() => {
     if (!socket) return;
 
@@ -54,6 +57,9 @@ export default function ProductList() {
       });
       console.log('New product received via WebSocket:', newProduct);
     };
+    socket.on('new_brand', (data) => {
+      console.log(data)
+    })
 
     socket.on('new_product', (data) => {
       toast("New Product", {
@@ -97,7 +103,10 @@ export default function ProductList() {
               </div>
               <div className="mt-4 text-left">
                 <p className="text-gray-500 text-sm">{product.brand}</p>
-                <h3 className="font-semibold text-lg">{product.title}</h3>
+                <div className="flex flex-col">
+                  <h3 className="font-semibold text-lg">{product.title}</h3>
+                  <h2>{product.country_id}</h2>
+                </div>
                 <p className="text-gray-800 font-bold">
                   {product.price_numeric} {product.currency}
                 </p>

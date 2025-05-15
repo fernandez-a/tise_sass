@@ -7,6 +7,7 @@ export const mapProduct = (item: any): Product => ({
   condition: item.condition,
   currency: item.currency,
   updated_at: new Date(item.updated_at).toLocaleString(),
+  country_id: item.country_id,
   price_numeric: item.price_numeric,
   photos: item.photos.map((photo: any) => ({
     url: photo.url,

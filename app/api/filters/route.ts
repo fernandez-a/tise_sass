@@ -3,12 +3,12 @@ import { NextResponse } from "next/server";
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-    const brand = searchParams.get("brand");
+    const queryString = searchParams.toString(); // capture full query string
+    const flaskUrl = `http://127.0.0.1:5000/api/filter?${queryString}`;
 
-    console.log("Brand received:", brand);
+    console.log("Forwarding to Flask URL:", flaskUrl);
 
-    // // Optional: Forward this to your Flask backend
-    const response = await fetch(`http://127.0.0.1:5000/api/get_brand_id?brand=${encodeURIComponent(brand || "")}`);
+    const response = await fetch(flaskUrl);
 
     if (!response.ok) {
       console.error(`Failed to fetch data from Flask app: ${response.status}`);
@@ -19,7 +19,6 @@ export async function GET(request: Request) {
     }
 
     const data = await response.json();
-    console.log(data)
     return NextResponse.json({ success: true, results: data });
 
   } catch (error) {
