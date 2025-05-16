@@ -66,13 +66,12 @@ export default function FilterCard() {
             const data = await res.json();
             console.log(user.id)
             if (data.success) {
-                const filter_data = data.results.filter
-                console.log(filter_data)
+                
                 const { error: insertError } = await supabase.from("filters").insert({
                     user_id: user.id,
-                    brand_id: filter_data.brand,
-                    location: filter_data.country,
-                    condition: filter_data.condition,
+                    brand_id: queryParams.get('brand'),
+                    location: queryParams.get('country'),
+                    condition: queryParams.get('condition'),
                 });
 
                 if (insertError) {

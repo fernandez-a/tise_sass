@@ -12,15 +12,17 @@ import { Label } from "../ui/label";
 import { useUser } from "@/context/UserContext";
 import { Filter } from "@/types/filter"; // Import the Product type
 import { mapFilter } from "@/utils/filterMapping";
-import { map } from "zod";
 import { Badge } from "../ui/badge";
+import useSocket from "@/hooks/useSocket";
+import { Button } from "@/components/ui/button";
+import { RefreshCcw } from "lucide-react";
 
 
 export default function FilterDisplay() {
     const [filters, setFilters] = useState<Filter[]>([]);
     const supabase = createClient();
     const user = useUser();
-
+    const socket = useSocket("http://localhost:5000");
     useEffect(() => {
         const fetchFilters = async () => {
             if (user?.id) {
@@ -47,6 +49,27 @@ export default function FilterDisplay() {
         fetchFilters();
     }, [supabase, user?.id]);
 
+    useEffect(() => {
+        if (!socket) return;
+
+        // const handleNewProduct = (rawNewProduct: any) => {
+        //     console.log("WebSocket event 'new_product' received!");
+        //     const newProduct = mapFilter(rawNewProduct);
+        //     setFilters((prevProducts) => {
+        //         if (prevProducts) {
+        //             return [newProduct, ...prevProducts];
+        //         } else {
+        //             return [newProduct];
+        //         }
+        //     });
+        //     console.log('New product received via WebSocket:', newProduct);
+        // };
+        socket.on('new_filter', (data) => {
+            console.log(data)
+        })
+
+    }, [socket]);
+
     if (!user) {
         return <div>Loading user Filters...</div>; // Or a spinner
     }
@@ -67,7 +90,7 @@ export default function FilterDisplay() {
                                 </div>
                             )}
                             {filter.condition && (
-                                <div className="flex flex-col">
+                                <div className="">
                                     <Label className="text-right w-24">Condition:</Label>
                                     <Badge>{filter.condition || "N/A"}</Badge>
                                 </div>
@@ -78,23 +101,19 @@ export default function FilterDisplay() {
                                     <Badge>{filter.location || "N/A"}</Badge>
                                 </div>
                             )}
-                            {/* {Object.keys(filter || {})
-                                .filter(key => !['brand', 'condition', 'location'].includes(key))
-                                .map(key => (
-                                    <div key={key} className="flex items-center space-x-2">
-                                        <Label className="text-right w-24">{key}:</Label>
-                                        <span>{filter[key as keyof typeof filter] || "N/A"}</span>
-                                    </div>
-                                ))} */}
+                            <div className="">
+                                <Label className="text-right w-24">Refresh</Label>
+                                <Button
+                                    variant="ghost"
+                                >
+                                    <RefreshCcw className="text-green-500" size={16} />
+                                </Button>
+                            </div>
                         </CardContent>
                     </Card>
                 ))
             ) : (
-                <Card className="m-4 w-[400px]">
-                    <CardContent className="p-4 text-center">
-                        No filters saved yet.
-                    </CardContent>
-                </Card>
+                <div>Loading user Filters...</div>
             )}
         </div>
     );
