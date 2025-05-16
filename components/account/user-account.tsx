@@ -24,7 +24,7 @@ interface UserAccountProps {
 import CaptchaHarvesterCard from "../captcha-card";
 
 export default function UserAccount({ profile, user }: UserAccountProps) {
-  
+
   return (
     <div>
       {/*Breadcrumb */}
@@ -35,7 +35,7 @@ export default function UserAccount({ profile, user }: UserAccountProps) {
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbLink href="/account">My account</BreadcrumbLink>
+            My account
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>

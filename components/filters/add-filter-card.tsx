@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { use, useState } from "react";
 import { z } from "zod"
 import { Button } from "@/components/ui/button";
 import {
@@ -64,15 +64,20 @@ export default function FilterCard() {
         try {
             const res = await fetch(apiUrl);
             const data = await res.json();
-            console.log(data);
+            console.log(user.id)
+            if (data.success) {
+                const filter_data = data.results.filter
+                console.log(filter_data)
+                const { error: insertError } = await supabase.from("filters").insert({
+                    user_id: user.id,
+                    brand_id: filter_data.brand,
+                    location: filter_data.country,
+                    condition: filter_data.condition,
+                });
 
-            if (data.status) {
-                await supabase.from("filters").insert([
-                    {
-                        user_id: user.id,
-                        brand_id: formData, // Consider fixing this field name if it's not actually "brand_id"
-                    },
-                ]);
+                if (insertError) {
+                    console.error("Profile insert failed:", insertError.message);
+                }
                 toast.success("New Filter created", {
                     description: `🔔 Filter for ${formData.brand} created`,
                 });
@@ -97,8 +102,7 @@ export default function FilterCard() {
                     </BreadcrumbItem>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
-                        <BreadcrumbLink href="/monitor/filters">Add Filter</BreadcrumbLink>
-                         <BreadcrumbLink href="/monitor/filters">My Filter</BreadcrumbLink>
+                        <BreadcrumbLink href="/monitor/new_filter">Add Filter</BreadcrumbLink>
                     </BreadcrumbItem>
                 </BreadcrumbList>
             </Breadcrumb>

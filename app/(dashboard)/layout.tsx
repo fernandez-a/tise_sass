@@ -32,7 +32,6 @@ export default async function RootLayout({
           <div className="px-4">{children}</div>
         </main>
         <Toaster />
-        {/* <SocketListener /> */}
       </SidebarProvider>
     </>
   );
